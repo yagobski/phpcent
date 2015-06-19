@@ -106,7 +106,7 @@ class Client
                  ->communicate(
                      $this->host,
                      $this->projectKey,
-                     ["data" => $data, "sign" => $this->buildSign($data)]
+                     ["data" => $data, "sign" => Sign::api($this->projectKey, $this->projectSecret, $data)]
                  );
     }
 
@@ -114,11 +114,15 @@ class Client
      * @param $data
      * @return string $hash
      * @throws \Exception if required data not specified
+     * @deprecated
      */
     public function buildSign($data)
     {
         if (empty($this->projectKey) || empty($this->projectSecret)) {
-            throw new \Exception("Project key and Project secret should nod be empty");
+
+            throw new \BadMethodCallException(
+                "Project key and Project secret should nod be empty"
+            );
         }
 
         $ctx = hash_init("sha256", HASH_HMAC, $this->projectSecret);
